@@ -134,6 +134,7 @@ import { formatTimings, resetTimings, time } from "../../core/timings.ts";
 import { withBuiltInRenderers } from "../../core/tools/renderers/index.ts";
 import type { TruncationResult } from "../../core/tools/truncate.ts";
 import { hasTrustRequiringProjectResources, ProjectTrustStore } from "../../core/trust-manager.ts";
+import { UnknownCommandError } from "../../core/unknown-command.ts";
 import { getUsageCostBreakdown } from "../../core/usage-totals.ts";
 import {
 	consumeEarlyInspectorVmImportRecoveries,
@@ -1887,7 +1888,8 @@ export class InteractiveMode {
 			} catch (error: unknown) {
 				this.optimisticUserEchoes.reject(userInput.pendingEchoId);
 				this.clearStatusIndicator("working");
-				if (this.reportUnknownCommandRejection(error, userInput.text)) continue;
+				if (error instanceof UnknownCommandError && this.reportUnknownCommandRejection(error, userInput.text))
+					continue;
 				const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
 				this.showError(errorMessage);
 			}
@@ -5029,7 +5031,7 @@ export class InteractiveMode {
 						});
 					} catch (error) {
 						this.optimisticUserEchoes.reject(pendingEchoId);
-						if (this.reportUnknownCommandRejection(error, text)) return;
+						if (error instanceof UnknownCommandError && this.reportUnknownCommandRejection(error, text)) return;
 						throw error;
 					}
 					this.updatePendingMessagesDisplay();
@@ -6742,7 +6744,7 @@ export class InteractiveMode {
 				});
 			} catch (error) {
 				this.optimisticUserEchoes.reject(pendingEchoId);
-				if (this.reportUnknownCommandRejection(error, text)) return;
+				if (error instanceof UnknownCommandError && this.reportUnknownCommandRejection(error, text)) return;
 				throw error;
 			}
 			this.updatePendingMessagesDisplay();
@@ -7314,7 +7316,11 @@ export class InteractiveMode {
 							},
 						).catch((error: unknown) => {
 							// A rejected unknown command is consumed here, so it cannot block the queue behind it.
-							if (this.reportUnknownCommandRejection(error, message.text)) return "handled" as const;
+							if (
+								error instanceof UnknownCommandError &&
+								this.reportUnknownCommandRejection(error, message.text)
+							)
+								return "handled" as const;
 							throw error;
 						}),
 					deliverQueued: (message) => {
