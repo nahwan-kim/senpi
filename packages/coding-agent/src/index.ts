@@ -319,7 +319,6 @@ export {
 	type SkillFrontmatter,
 } from "./core/skills.ts";
 export { createSyntheticSourceInfo } from "./core/source-info.ts";
-export { UnknownCommandError, type UnknownCommandReason } from "./core/unknown-command.ts";
 export { type EditDiffResult, generateDiffString, generateUnifiedPatch } from "./core/tools/edit-diff.ts";
 // Tools
 export {
@@ -384,6 +383,7 @@ export {
 	type ProjectTrustStoreEntry,
 	type ProjectTrustUpdate,
 } from "./core/trust-manager.ts";
+export { UnknownCommandError, type UnknownCommandReason } from "./core/unknown-command.ts";
 // Main-thread Bun.WebView service for eval kernels running in worker threads
 export { connectWebViewService, type WebViewServiceConnection } from "./core/webview/webview-broker.ts";
 // Main entry point
