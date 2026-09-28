@@ -38,6 +38,7 @@ type RpcSessionCommand =
 			thinkingLevel?: ThinkingLevel;
 			sessionTitlePrompt?: string | false;
 			expandPromptTemplates?: boolean;
+			unknownCommandAsText?: boolean;
 	  }
 	| {
 			id?: string;
@@ -249,6 +250,8 @@ export const RPC_ERROR_NOT_ASSISTANT = "not_assistant";
 export const RPC_ERROR_NOT_USER = "not_user";
 export const RPC_ERROR_EMPTY_TEXT = "empty";
 export const RPC_ERROR_STALE_LEAF = "stale_leaf";
+/** `prompt` text was command-shaped but no command handles it; mirrors `UnknownCommandError`. */
+export const RPC_ERROR_UNKNOWN_COMMAND = "unknown_command";
 
 export type RpcErrorCode =
 	| typeof RPC_ERROR_UNKNOWN_SESSION
@@ -271,6 +274,7 @@ export type RpcErrorCode =
 	| typeof RPC_ERROR_NOT_ASSISTANT
 	| typeof RPC_ERROR_NOT_USER
 	| typeof RPC_ERROR_EMPTY_TEXT
+	| typeof RPC_ERROR_UNKNOWN_COMMAND
 	| typeof RPC_ERROR_STALE_LEAF;
 
 /** Every established command accepts an additive routing envelope. */
